@@ -3,9 +3,15 @@ import { NextResponse, NextRequest } from "next/server";
 const DATA_SOURCE_URL = "https://jsonplaceholder.typicode.com/todos";
 const API_KEY: string = process.env.DATA_API_KEY as string;
 
-export async function GET(request: NextRequest) {
-  const id = request.nextUrl.pathname.split("/").pop() as string;
-  const res = await fetch(`${DATA_SOURCE_URL}/${id}`, {
+type Props = {
+  params: {
+    todoId: string;
+  };
+};
+
+export async function GET(_request: NextRequest, { params: { todoId } }: Props) {
+  // const id = request.nextUrl.pathname.split("/").pop() as string;
+  const res = await fetch(`${DATA_SOURCE_URL}/${todoId}`, {
     headers: {
       "API-Key": API_KEY,
     },
@@ -22,8 +28,9 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(todo);
 }
 
-export async function PUT(request: NextRequest) {
-  const id = request.nextUrl.pathname.split("/").pop() as string;
+export async function PUT(request: NextRequest, { params: { todoId } }: Props) {
+  // const id = request.nextUrl.pathname.split("/").pop() as string;
+  const id = todoId;
   const { title, userId, completed }: Partial<Todo> = await request.json();
   if (!id || !title || !userId || typeof completed !== "boolean")
     return NextResponse.json(
